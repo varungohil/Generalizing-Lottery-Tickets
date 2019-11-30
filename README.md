@@ -88,8 +88,9 @@ python3 test.py --architecture=resnet50 --dataset=cifar10 --model-path=<path-to-
 ```
 
 
-## Main Contribution   
-TODO
+### Results   
+The results of the replicated experiments can be found in plots folder.
+![Exp1_resnet](plots/Exp1_ResNet.pdf)
   
 
 ### Citation   

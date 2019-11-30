@@ -31,10 +31,10 @@ There are 4 files in ```src``` folder:
 To support more datasets and architectures, we need to add necessary code to utils.py
 
 ### Using train.py
-Mandatory arguments:
+##### Mandatory arguments:
 - --architecture : To specify the neural network architecture (vgg19 and resnet50)
 - --dataset      : The dataset to train on (cifar10, cifar100, fashionmnist, svhn, cifar10a, cifar10b)
-Optional arguments:
+##### Optional arguments:
 - --batch-size : To set the batch size while training
 - --optimizer  : The optimizer to use for training (sgd and adam). sgd used by default
 - --seed : To set the ranodm seed
@@ -50,13 +50,13 @@ python3 train.py --architecture=resnet50 --dataset=cifar10
 ```
 
 ### Using iterative_pruning.py
-Mandatory arguments:
+##### Mandatory arguments:
 - --architecture : To specify the neural network architecture (vgg19 and resnet50)
 - --target-dataset      : The dataset to train on (cifar10, cifar100, fashionmnist, svhn, cifar10a, cifar10b)
 - --source-dataset      : The dataset using which winning ticket initialization was found (cifar10, cifar100, fashionmnist, svhn, cifar10a, cifar10b)
 - --init_path   : Path to model with winning ticket initialization
 
-Optional arguments:
+##### Optional arguments:
 - --batch-size : To set the batch size while training
 - --optimizer  : The optimizer to use for training (sgd and adam). sgd used by default
 - --seed : To set the ranodm seed
@@ -73,12 +73,12 @@ python3 iterative_pruning.py --architecture=resnet50 --source-dataset=cifar10 --
 ```
 
 ### Using test.py
-Mandatory arguments:
+##### Mandatory arguments:
 - --architecture : To specify the neural network architecture (vgg19 and resnet50)
 - --dataset      : The dataset to train on (cifar10, cifar100, fashionmnist, svhn, cifar10a, cifar10b)
 - --model-path   : The path to moedl whose accuracy needs to be evaluated.
 
-Optional arguments:
+##### Optional arguments:
 - --batch-size : To set the batch size while training
 
 Running this script will print the _Fraction of pruned weights_ in the model and the _Test Accuracy_. 

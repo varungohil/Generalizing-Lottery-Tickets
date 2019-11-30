@@ -22,11 +22,13 @@ pip3 install requirements.txt
 ```
 
 ## How to Run
-There are 4 file in ```src``` folder:
+There are 4 files in ```src``` folder:
 - train.py             : Use to train the neural network and find the winning ticket
 - test.py              : Use to test the accuracy of the trained model
 - iterative_pruning.py : Use to iteratively prune the model.
 - utils.py             : Contains helper functions used in scripts mentioned above
+
+To support more datasets and architectures, we need to add necessary code to utils.py
 
 ### Using train.py
 Mandatory arguments:

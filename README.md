@@ -8,9 +8,7 @@
 This repository contains code to replicate the experiments given in NeurIPS 2019 paper "One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers"
 
 
-## How to run   
-TODO
-First, install dependencies   
+## How to run     
 ```bash
 # clone project   
 git clone https://github.com/varungohil/Generalizing-Lottery-Tickets.git  

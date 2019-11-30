@@ -91,8 +91,9 @@ python3 test.py --architecture=resnet50 --dataset=cifar10 --model-path=<path-to-
 ### Results   
 The results of the replicated experiments can be found in plots folder.
   
+
+### Citation 
 To cite the original paper use the bibtex below
-### Citation   
 ```
 @article{Morcos2019OneTT,
   title={One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers},

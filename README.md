@@ -9,6 +9,7 @@ This repository contains PyTorch code to replicate the experiments given in Neur
 
 [___"One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers"___](https://arxiv.org/abs/1906.02773v2)
 
+As finding the _winning lottery tickets_ is computationally expensive, we also open-source winning tickets (pretrained and pruned models) we generated during our experiments. Link : [Winning Tickets]()
 
 ## How to Setup    
 ```bash

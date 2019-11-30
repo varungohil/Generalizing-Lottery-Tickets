@@ -16,9 +16,8 @@ First, install dependencies
 git clone https://github.com/varungohil/Generalizing-Lottery-Tickets.git  
 
 # install project   
-cd Your-project-name 
-pip install -e .   
-pip install requirements.txt
+cd eneralizing-Lottery-Ticket    
+pip3 install requirements.txt
  ```   
  Next, navigate to [Your Main Contribution (MNIST here)] and run it.   
  ```bash

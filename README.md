@@ -17,7 +17,7 @@ As finding the _winning lottery tickets_ is computationally expensive, we also o
 git clone https://github.com/varungohil/Generalizing-Lottery-Tickets.git  
 
 # install all dependencies   
-cd Generalizing-Lottery-Ticket    
+cd Generalizing-Lottery-Tickets    
 pip3 install requirements.txt
 ```
 

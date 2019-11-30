@@ -13,7 +13,7 @@ TODO
 First, install dependencies   
 ```bash
 # clone project   
-git clone https://github.com/YourGithubName/Your-project-name   
+git clone https://github.com/varungohil/Generalizing-Lottery-Tickets.git  
 
 # install project   
 cd Your-project-name 

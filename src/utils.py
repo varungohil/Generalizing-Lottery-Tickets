@@ -76,7 +76,7 @@ def args_parser_test():
     parser.add_argument('--batch-size', type=int, default=512,
                         help='input batch size for training (default: 512)')
 
-    parser.add_argument('--model_path',type=str, required=True,
+    parser.add_argument('--model-path',type=str, required=True,
                         help='path to the model for finding test accuracy')  
     return parser
 
@@ -109,6 +109,39 @@ def load_dataset(dataset, batch_size = 512, is_train_split=True):
 			transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
 			data_set = torchvision.datasets.FashionMNIST(root='../datasets', train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True, num_workers=2)
+		elif dataset == 'cifar10a' or dataset == 'cifar10b':
+			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+			transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
+			cifarset = torchvision.datasets.CIFAR10(root='../datasets', train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
+			label_flag = {x:True for x in range(10)}
+			cifarA = []
+			cifarB = []
+			for sample in cifarset:
+				if label_flag[sample[-1]]:
+					cifarA.append(sample)
+					label_flag[sample[-1]] = False
+				else:
+					cifarB.append(sample)
+					label_flag[sample[-1]] = True
+			class DividedCifar10A(torch.utils.data.dataset.Dataset):
+				def __init__(self):
+					self.samples = cifarA
+				def __len__(self):
+					return len(self.samples)
+				def __getitem__(self, index):
+					return self.samples[index]
+			class DividedCifar10B(torch.utils.data.dataset.Dataset):
+				def __init__(self):
+					self.samples = cifarB
+				def __len__(self):
+					return len(self.samples)
+				def __getitem__(self, index):
+					return self.samples[index]
+			if dataset == 'cifar10a' :
+				data_set = DividedCifar10A()
+			else:
+				data_set == DividedCifar10B()
+			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True)
 		else:
 			ValueError("Dataset not supported.")
 	else:
@@ -136,6 +169,39 @@ def load_dataset(dataset, batch_size = 512, is_train_split=True):
 			# transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
 			data_set = torchvision.datasets.FashionMNIST(root='../datasets', train=is_train_split, download=True, transform=transform)
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True, num_workers=2)
+		elif dataset == 'cifar10a' or dataset == 'cifar10b':
+			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+			transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
+			cifarset = torchvision.datasets.CIFAR10(root='../datasets', train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
+			label_flag = {x:True for x in range(10)}
+			cifarA = []
+			cifarB = []
+			for sample in cifarset:
+				if label_flag[sample[-1]]:
+					cifarA.append(sample)
+					label_flag[sample[-1]] = False
+				else:
+					cifarB.append(sample)
+					label_flag[sample[-1]] = True
+			class DividedCifar10A(torch.utils.data.dataset.Dataset):
+				def __init__(self):
+					self.samples = cifarA
+				def __len__(self):
+					return len(self.samples)
+				def __getitem__(self, index):
+					return self.samples[index]
+			class DividedCifar10B(torch.utils.data.dataset.Dataset):
+				def __init__(self):
+					self.samples = cifarB
+				def __len__(self):
+					return len(self.samples)
+				def __getitem__(self, index):
+					return self.samples[index]
+			if dataset == 'cifar10a' :
+				data_set = DividedCifar10A()
+			else:
+				data_set == DividedCifar10B()
+			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True)
 		else:
 			ValueError(dataset + " dataset not supported.")
 	return data_loader

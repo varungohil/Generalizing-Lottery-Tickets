@@ -1,7 +1,7 @@
 ---   
 <div align="center">    
  
-# Neurips Reproducibility Challenge     
+# NeurIPS Reproducibility Challenge     
 </div>
  
 ## Description   

@@ -7,7 +7,7 @@
 ## Description   
 This repository contains PyTorch code to replicate the experiments given in NeurIPS 2019 paper 
 
-___"One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers"___
+![___"One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers"___](https://arxiv.org/abs/1906.02773v2)
 
 
 ## How to Setup    
@@ -90,7 +90,6 @@ python3 test.py --architecture=resnet50 --dataset=cifar10 --model-path=<path-to-
 
 ### Results   
 The results of the replicated experiments can be found in plots folder.
-![Exp1_resnet](/plots/Exp1_ResNet.pdf)
   
 
 ### Citation   

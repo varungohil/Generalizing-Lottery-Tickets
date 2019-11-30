@@ -29,12 +29,19 @@ There are 4 file in ```src``` folder:
 Mandatory arguments:
 - --architecture : To specify the neural network architecture (vgg19 and resnet50)
 - --dataset      : The dataset to train on (cifar10, cifar100, fashionmnist, svhn)
+Optional arguments:
+- --batch-size : To set the batch size while training
+- --optimizer  : The optimizer to use for training (sgd and adam). sgd used by default
+- --seed : To set the ranodm seed
+- --model-saving-path : Path to directory where trained model is saved.
+
+The trained model will be saved for first 5 epochs. For VGG19 it will be saved for every 16<sup>th</sup> epoch. FOr Resnet50, the model will be saved for every 9<sup>th</sup> epoch. For our experiments, while pruning, we reinitialize te model with weights after epoch 2 (late resetting of 1).
 ```bash
 # source folder
 cd Generalizing-Lottery-Ticket/src   
 
-# run module (example: mnist as your main contribution)   
-python mnist_trainer.py    
+# run train,py
+python3 train.py --architecture=resnet50 --dataset=cifar10    
 ```
 
 ## Main Contribution   

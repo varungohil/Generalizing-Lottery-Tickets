@@ -1,7 +1,8 @@
----   div align=center    
+---   
+<div align="center">    
  
 # Neurips Reproducibility Challenge     
-div
+</div>
  
 ## Description   
 TODO
@@ -11,7 +12,7 @@ TODO
 First, install dependencies   
 ```bash
 # clone project   
-git clone httpsgithub.comYourGithubNameYour-project-name   
+git clone https://github.com/YourGithubName/Your-project-name   
 
 # install project   
 cd Your-project-name 
@@ -21,9 +22,9 @@ pip install requirements.txt
  Next, navigate to [Your Main Contribution (MNIST here)] and run it.   
  ```bash
 # module folder
-cd research_seedmnist   
+cd research_seed/mnist/   
 
-# run module (example mnist as your main contribution)   
+# run module (example: mnist as your main contribution)   
 python mnist_trainer.py    
 ```
 
@@ -34,10 +35,10 @@ TODO
 ### Citation   
 ```
 @article{Morcos2019OneTT,
-  title={One ticket to win them all generalizing lottery ticket initializations across datasets and optimizers},
+  title={One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers},
   author={Ari S. Morcos and Haonan Yu and Michela Paganini and Yuandong Tian},
   journal={ArXiv},
   year={2019},
-  volume={abs1906.02773}
+  volume={abs/1906.02773}
 }
 ```   

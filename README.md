@@ -19,6 +19,16 @@ pip3 install requirements.txt
 ```
 
 ## How to Run
+There are 4 file in ```src``` folder:
+- train.py             : Use to train the neural network and find the winning ticket
+- test.py              : Use to test the accuracy of the trained model
+- iterative_pruning.py : Use to iteratively prune the model.
+- utils.py             : Contains helper functions used in scripts mentioned above
+
+### Using train.py
+Mandatory arguments:
+- --architecture : To specify the neural network architecture (vgg19 and resnet50)
+- --dataset      : The dataset to train on (cifar10, cifar100, fashionmnist, svhn)
 ```bash
 # source folder
 cd Generalizing-Lottery-Ticket/src   

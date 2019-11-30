@@ -52,6 +52,7 @@ Mandatory arguments:
 - --target-dataset      : The dataset to train on (cifar10, cifar100, fashionmnist, svhn)
 - --source-dataset      : The dataset using which winning ticket initialization was found (cifar10, cifar100, fashionmnist, svhn)
 - --init_path   : Path to model with winning ticket initialization
+
 Optional arguments:
 - --batch-size : To set the batch size while training
 - --optimizer  : The optimizer to use for training (sgd and adam). sgd used by default
@@ -65,8 +66,27 @@ The script will run 30 pruning iterations which will prune away 99.9% of the wei
 cd Generalizing-Lottery-Ticket/src   
 
 # run iterative_pruning.py
-python3 iterative_pruning.py --architecture=resnet50 --source-dataset=cifar10 --target-dataset=cifar100   
+python3 iterative_pruning.py --architecture=resnet50 --source-dataset=cifar10 --target-dataset=cifar100 --model-saving-path=<path-to-dir-where-models-are-to-be-stored>
 ```
+
+### Using test.py
+Mandatory arguments:
+- --architecture : To specify the neural network architecture (vgg19 and resnet50)
+- --dataset      : The dataset to train on (cifar10, cifar100, fashionmnist, svhn)
+- --model-path   : The path to moedl whose accuracy needs to be evaluated.
+
+Optional arguments:
+- --batch-size : To set the batch size while training
+
+Running this script will print the _Fraction of pruned weights_ in the model and the _Test Accuracy_. 
+```bash
+# source folder
+cd Generalizing-Lottery-Ticket/src   
+
+# run train.py
+python3 test.py --architecture=resnet50 --dataset=cifar10 --model-path=<path-to-model>   
+```
+
 
 ## Main Contribution   
 TODO

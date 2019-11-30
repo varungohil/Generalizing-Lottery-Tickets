@@ -76,7 +76,7 @@ def args_parser_test():
     parser.add_argument('--batch-size', type=int, default=512,
                         help='input batch size for training (default: 512)')
 
-    parser.add_argument('--model-path',type=str, required=True,
+    parser.add_argument('--model_path',type=str, required=True,
                         help='path to the model for finding test accuracy')  
     return parser
 

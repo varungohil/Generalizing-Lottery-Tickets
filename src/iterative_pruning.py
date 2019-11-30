@@ -69,7 +69,7 @@ def prune_iteratively(model, dataloader, architecture, optimizer_type, device, m
 		num_epochs = 90
 		lr_anneal_epochs = [50, 65, 80]
 	else:
-		ValueError(architecture + " architecture not supported")
+		raise ValueError(architecture + " architecture not supported")
 
 	criterion = nn.CrossEntropyLoss().cuda()
 
@@ -83,7 +83,7 @@ def prune_iteratively(model, dataloader, architecture, optimizer_type, device, m
 		elif optimizer_type == 'adam':
 			optimizer = optim.Adam(model.parameters(), lr=0.0003, weight_decay=0.0001)
 		else:
-			ValueError(optimizer_type + " optimizer not supported")
+			raise ValueError(optimizer_type + " optimizer not supported")
 
 		if pruning_iter != 0:
 			cpt = torch.load(models_path + f"/{pruning_iter-1}_{num_epochs}")
@@ -130,7 +130,7 @@ def prune_iteratively(model, dataloader, architecture, optimizer_type, device, m
 								elif architecture == 'resnet50':
 									nn.init.kaiming_normal_(m.weight)
 								else:
-									ValueError(architecture + " architecture not supported")
+									raise ValueError(architecture + " architecture not supported")
 
 		model.to(device)
 
@@ -180,14 +180,14 @@ if __name__ == '__main__':
 	elif args.source_dataset in ['cifar100']:
 		num_classes_source = 100
 	else:
-		ValueError(args.source_dataset + " as a source dataset is not supported")
+		raise ValueError(args.source_dataset + " as a source dataset is not supported")
 
 	if args.target_dataset in ['cifar10', 'svhn', 'fashionmnist']:
 		num_classes_target = 10
 	elif args.target_dataset in ['cifar100']:
 		num_classes_target = 100
 	else:
-		ValueError(args.target_dataset + " as a target dataset is not supported")
+		raise ValueError(args.target_dataset + " as a target dataset is not supported")
 
 	dataloader = load_dataset(args.target_dataset, args.batch_size, True)
 

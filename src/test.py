@@ -45,7 +45,7 @@ if __name__ == '__main__':
 	elif args.dataset in ['cifar100']:
 		num_classes = 100
 	else:
-		ValueError(args.dataset + " dataset not supported")
+		raise ValueError(args.dataset + " dataset not supported")
 	model = load_model(args.architecture, num_classes)
 
 	test(model, dataloader, device, args.model_path)

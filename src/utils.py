@@ -143,7 +143,7 @@ def load_dataset(dataset, batch_size = 512, is_train_split=True):
 				data_set == DividedCifar10B()
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True)
 		else:
-			ValueError("Dataset not supported.")
+			raise ValueError("Dataset not supported.")
 	else:
 		if dataset == 'cifar10':
 			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -203,7 +203,7 @@ def load_dataset(dataset, batch_size = 512, is_train_split=True):
 				data_set == DividedCifar10B()
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True)
 		else:
-			ValueError(dataset + " dataset not supported.")
+			raise ValueError(dataset + " dataset not supported.")
 	return data_loader
 
 
@@ -648,4 +648,4 @@ def load_model(architecture, num_classes):
 
 		return resnet50(pretrained=False)
 	else:
-		ValueError(architecture + " architecture not supported.")
+		raise ValueError(architecture + " architecture not supported.")

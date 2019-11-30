@@ -18,7 +18,7 @@ def train(model, dataloader, architecture, optimizer_type, device, models_dir, i
 		num_epochs = 90
 		lr_anneal_epochs = [50, 65, 80]
 	else:
-		ValueError(architecture + " architecture not supported")
+		raise ValueError(architecture + " architecture not supported")
 
 	criterion = nn.CrossEntropyLoss().cuda()
 	if optimizer_type == 'sgd':
@@ -26,7 +26,7 @@ def train(model, dataloader, architecture, optimizer_type, device, models_dir, i
 	elif optimizer_type == 'adam':
 		optimizer = optim.Adam(model.parameters(), lr=0.0003, weight_decay=0.0001)
 	else:
-		ValueError(optimizer_type + " optimizer not supported")
+		raise ValueError(optimizer_type + " optimizer not supported")
 
 	if architecture == "vgg19" and not is_part_of_iter_prune:
 		model.apply(initialize_xavier_normal)
@@ -72,7 +72,7 @@ if __name__ == '__main__':
 	elif args.dataset in ['cifar100']:
 		num_classes = 100
 	else:
-		ValueError(args.dataset + " dataset not supported")
+		raise ValueError(args.dataset + " dataset not supported")
 
 	model = load_model(args.architecture, num_classes)
 

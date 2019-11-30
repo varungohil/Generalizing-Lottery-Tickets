@@ -42,8 +42,30 @@ The trained model will be saved for first 5 epochs. For VGG19 it will be saved f
 # source folder
 cd Generalizing-Lottery-Ticket/src   
 
-# run train,py
+# run train.py
 python3 train.py --architecture=resnet50 --dataset=cifar10    
+```
+
+### Using iterative_pruning.py
+Mandatory arguments:
+- --architecture : To specify the neural network architecture (vgg19 and resnet50)
+- --target-dataset      : The dataset to train on (cifar10, cifar100, fashionmnist, svhn)
+- --source-dataset      : The dataset using which winning ticket initialization was found (cifar10, cifar100, fashionmnist, svhn)
+- --init_path   : Path to model with winning ticket initialization
+Optional arguments:
+- --batch-size : To set the batch size while training
+- --optimizer  : The optimizer to use for training (sgd and adam). sgd used by default
+- --seed : To set the ranodm seed
+- --model-saving-path : Path to directory where trained model is saved.
+
+The script will run 30 pruning iterations which will prune away 99.9% of the weights. The trained and pruned model will be saved at end of each pruning iteration
+
+```bash
+# source folder
+cd Generalizing-Lottery-Ticket/src   
+
+# run iterative_pruning.py
+python3 iterative_pruning.py --architecture=resnet50 --source-dataset=cifar10 --target-dataset=cifar100   
 ```
 
 ## Main Contribution   

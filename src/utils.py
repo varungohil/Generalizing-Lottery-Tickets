@@ -12,6 +12,9 @@ import torchvision.transforms as transforms
 from torch.hub import load_state_dict_from_url
 
 def args_parser_train():
+	"""
+	returns argument parser object used while training a model
+	"""
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--architecture', required=True, type=str,
@@ -34,6 +37,9 @@ def args_parser_train():
     return parser
 
 def args_parser_iterprune():
+	"""
+	returns argument parser object used for iterative pruning
+	"""
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--architecture', type=str, metavar='arch',required=True,
@@ -65,6 +71,9 @@ def args_parser_iterprune():
 
 
 def args_parser_test():
+	"""
+	returns argument parser object used while testing a model
+	"""
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--architecture', type=str, metavar='arch', required=True,
@@ -82,7 +91,17 @@ def args_parser_test():
 
 def load_dataset(dataset, batch_size = 512, is_train_split=True):
 	"""
-	Returns the dataset loader object
+	Loads the dataset loader object
+
+	Arguments
+	---------
+	dataset : Name of dataset which has to be loaded
+	batch_size : Batch size to be used 
+	is_train_split : Boolean which when true, indicates that training dataset will be loaded
+
+	Returns
+	-------
+	Pytorch Dataloader object
 	"""
 	if is_train_split:
 		if dataset == 'cifar10':
@@ -209,8 +228,17 @@ def load_dataset(dataset, batch_size = 512, is_train_split=True):
 
 def load_model(architecture, num_classes):
 	"""
-	Returns the neural network model. 
+	Loads the neural network model. 
 	The definitions of architectures are taken from PyTorch source code.  
+
+	Arguments
+	---------
+	architecture : The neural network architecture
+	num_classes  : The number of classes in dataset on which the model will be trained
+
+	Returns
+	------
+	The PyTorch neural network model object
 	"""
 	if architecture == "vgg19":
 		__all__ = ['VGG', 'vgg11', 'vgg11_bn', 'vgg13', 'vgg13_bn', 'vgg16', 'vgg16_bn',

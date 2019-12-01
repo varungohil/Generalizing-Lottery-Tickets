@@ -6,11 +6,38 @@ import torch.optim as optim
 
 
 def initialize_xavier_normal(layer):
+	"""
+	Function to initialize a layer by picking weights from a xavier normal distribution
+
+	Arguments
+	---------
+	layer : The layer of the neural network
+
+	Returns
+	-------
+	None
+	"""
 	if type(layer) == nn.Conv2d:
 		torch.nn.init.xavier_normal_(layer.weight)
 		layer.bias.data.fill_(0)
 
-def train(model, dataloader, architecture, optimizer_type, device, models_dir, is_part_of_iter_prune=False):
+def train(model, dataloader, architecture, optimizer_type, device, models_dir):
+	"""
+	Function to train the network 
+
+	Arguments
+	---------
+	model : the PyTorch neural network model to be trained
+	dataloader : PyTorch dataloader for loading the dataset
+	architecture : The neural network architecture (VGG19 or ResNet50)
+	optimizer_type : The optimizer to use for training (SGD / Adam)
+	device : Device(GPU/CPU) on which to perform computation
+	model_path: Path to directory where trained model/checkpoints will be saved
+
+	Returns
+	-------
+	None
+	"""
 	if architecture == "vgg19":
 		num_epochs = 160
 		lr_anneal_epochs = [80, 120]
@@ -28,7 +55,7 @@ def train(model, dataloader, architecture, optimizer_type, device, models_dir, i
 	else:
 		raise ValueError(optimizer_type + " optimizer not supported")
 
-	if architecture == "vgg19" and not is_part_of_iter_prune:
+	if architecture == "vgg19":
 		model.apply(initialize_xavier_normal)
 
 	model.to(device)
@@ -57,16 +84,21 @@ def train(model, dataloader, architecture, optimizer_type, device, models_dir, i
 
 
 if __name__ == '__main__':
+	#Parsers the command line arguments
 	parser = args_parser_train()
 	args = parser.parse_args()
 
+	#Sets random seed
 	random.seed(args.seed)
 
+	#Uses GPU is available
 	device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 	print(f'Using {device} device.')
 
+	#Loads dataset
 	dataloader = load_dataset(args.dataset, args.batch_size, True)
 
+	#Checks number of classes to aa appropriate linear layer at end of model
 	if args.dataset in ['cifar10', 'fashionmnist', 'svhn']:
 		num_classes = 10
 	elif args.dataset in ['cifar100']:
@@ -74,6 +106,7 @@ if __name__ == '__main__':
 	else:
 		raise ValueError(args.dataset + " dataset not supported")
 
+	#Loads model
 	model = load_model(args.architecture, num_classes)
 
 	train(model, dataloader, args.architecture, args.optimizer, device, args.model_saving_path)

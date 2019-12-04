@@ -105,4 +105,7 @@ To cite the original paper use the bibtex below
   year={2019},
   volume={abs/1906.02773}
 }
-```   
+```  
+### Contributors
+[Varun Gohil](varungohil.github.io), [S. Deepak Narayanan](sdeepaknarayanan.github.io), [Atishay Jain](https://github.com/AtishayJain-ML) - All three contributed equally to this reproducibility challenge.
+

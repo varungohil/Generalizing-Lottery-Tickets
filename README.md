@@ -107,5 +107,5 @@ To cite the original paper use the bibtex below
 }
 ```  
 ### Contributors
-[Varun Gohil](varungohil.github.io), [S. Deepak Narayanan](sdeepaknarayanan.github.io), [Atishay Jain](https://github.com/AtishayJain-ML) - All three contributed equally to this reproducibility challenge.
+[Varun Gohil*](https://varungohil.github.io), [S. Deepak Narayanan*](https://sdeepaknarayanan.github.io), [Atishay Jain*](https://github.com/AtishayJain-ML)
 

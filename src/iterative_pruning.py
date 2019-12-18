@@ -179,7 +179,7 @@ def prune_iteratively(model, dataloader, architecture, optimizer_type, device, m
 					for name, params in model.named_parameters():
 						if "weight" in name:
 							params.data.mul_(masks[layer_index].to(device))
-						layer_index += 1
+							layer_index += 1
 
 				outputs = model(inputs)
 				loss = criterion(outputs, labels)

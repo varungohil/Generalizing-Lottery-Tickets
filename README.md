@@ -54,7 +54,7 @@ python3 train.py --architecture=resnet50 --dataset=cifar10
 - --architecture : To specify the neural network architecture (vgg19 and resnet50)
 - --target-dataset      : The dataset to train on (cifar10, cifar100, fashionmnist, svhn, cifar10a, cifar10b)
 - --source-dataset      : The dataset using which winning ticket initialization was found (cifar10, cifar100, fashionmnist, svhn, cifar10a, cifar10b)
-- --init_path   : Path to model with winning ticket initialization
+- --init-path   : Path to model with winning ticket initialization
 
 ##### Optional arguments:
 - --batch-size : To set the batch size while training

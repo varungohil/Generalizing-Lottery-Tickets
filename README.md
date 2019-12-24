@@ -96,8 +96,14 @@ The results of the replicated experiments can be found in plots folder.
   
 
 ### Citation 
-To cite the original paper use the bibtex below
+If you use this repository, kindly cite the reproducibility report and the original paper. The bibtex is given below.
 ```
+@article{gohil2019one,
+  title={One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers},
+  author={Gohil, Varun and Narayanan, S Deepak and Jain, Atishay},
+  year={2019}
+}
+
 @article{Morcos2019OneTT,
   title={One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers},
   author={Ari S. Morcos and Haonan Yu and Michela Paganini and Yuandong Tian},

@@ -18,7 +18,7 @@ git clone https://github.com/varungohil/Generalizing-Lottery-Tickets.git
 
 # install all dependencies   
 cd Generalizing-Lottery-Tickets    
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ## How to Run

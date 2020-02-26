@@ -101,7 +101,8 @@ If you use this repository, kindly cite the reproducibility report and the origi
 @article{gohil2019one,
   title={One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers},
   author={Gohil, Varun and Narayanan, S Deepak and Jain, Atishay},
-  year={2019}
+  journal={ReScience-C}
+  year={2020}
 }
 
 @article{Morcos2019OneTT,

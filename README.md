@@ -1,7 +1,7 @@
 ---   
 <div align="center">    
  
-# NeurIPS Reproducibility Challenge     
+# Generalizing Lottery Tickets     
 </div>
  
  [![DOI](https://zenodo.org/badge/224994704.svg)](https://zenodo.org/badge/latestdoi/224994704)

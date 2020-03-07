@@ -3,9 +3,8 @@
  
 # Generalizing Lottery Tickets   
 
- [![DOI](https://zenodo.org/badge/224994704.svg)](https://zenodo.org/badge/latestdoi/224994704)[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+ [![DOI](https://zenodo.org/badge/224994704.svg)](https://zenodo.org/badge/latestdoi/224994704)  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Mozilla
 </div>
  
 

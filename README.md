@@ -4,6 +4,8 @@
 # NeurIPS Reproducibility Challenge     
 </div>
  
+ [![DOI](https://zenodo.org/badge/224994704.svg)](https://zenodo.org/badge/latestdoi/224994704)
+ 
 ## Description   
 This repository contains PyTorch code to replicate the experiments given in NeurIPS 2019 paper 
 

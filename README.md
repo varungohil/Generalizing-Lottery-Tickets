@@ -117,6 +117,17 @@ If you use this repository, kindly cite the reproducibility report and the origi
   year={2019},
   volume={abs/1906.02773}
 }
+
+@misc{https://doi.org/10.5281/zenodo.3700320,
+  doi = {10.5281/ZENODO.3700320},
+  url = {https://zenodo.org/record/3700320},
+  author = {{Varun Gohil} and {S Deepak Narayanan} and {Atishay Jain}},
+  keywords = {Lottery Ticket Hypothesis,  Neural Network Pruning,  NeurIPS Reproducibility Challenge},
+  language = {en},
+  title = {varungohil/Generalizing-Lottery-Tickets},
+  publisher = {Zenodo},
+  year = {2020}
+}
 ```  
 ### Contributors
 [Varun Gohil*](https://varungohil.github.io), [S. Deepak Narayanan*](https://sdeepaknarayanan.github.io), [Atishay Jain*](https://github.com/AtishayJain-ML)

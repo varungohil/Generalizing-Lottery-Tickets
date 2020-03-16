@@ -3,6 +3,7 @@ from dataloader import *
 from model import *
 from parser import *
 import torch
+import torch.nn as nn
 import random
 import torchvision
 import torch.optim as optim
@@ -99,6 +100,8 @@ def prune_iteratively(model, dataloader, architecture, optimizer_type, device, m
 								else:
 									raise ValueError(architecture + " architecture not supported")
 
+		if torch.cuda.device_count() > 1:
+			model = nn.DataParallel(model)
 		model.to(device)
 
 		pruning_cycle = tqdm(range(1, num_epochs+1))
@@ -151,6 +154,8 @@ if __name__ == '__main__':
 	#Uses GPU is available
 	device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 	print(f'Using {device} device.')
+	if torch.cuda.device_count() > 1:
+		print(f'Using {torch.cuda.device_count()} GPUs')	
 
 
 	#Checks number of classes to aa appropriate linear layer at end of model

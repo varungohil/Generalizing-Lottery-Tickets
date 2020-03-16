@@ -1,25 +1,11 @@
 from utils import *
+from dataloader import *
+from model import *
+from parser import *
 import torch
 import random
 import torchvision
 import torch.optim as optim
-
-
-def initialize_xavier_normal(layer):
-	"""
-	Function to initialize a layer by picking weights from a xavier normal distribution
-
-	Arguments
-	---------
-	layer : The layer of the neural network
-
-	Returns
-	-------
-	None
-	"""
-	if type(layer) == nn.Conv2d:
-		torch.nn.init.xavier_normal_(layer.weight)
-		layer.bias.data.fill_(0)
 
 def train(model, dataloader, architecture, optimizer_type, device, models_dir):
 	"""

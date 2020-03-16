@@ -1,78 +1,13 @@
 from utils import *
+from dataloader import *
+from model import *
+from parser import *
 import torch
 import random
 import torchvision
 import torch.optim as optim
 import numpy as np
-
-
-def get_20_percent(total):
-	"""
-	Argument
-	--------
-	total : The number whose 20 percent we need to calculate
-
-	Returns
-	-------
-	20% of total
-
-	"""
-	return 0.2*total
-
-
-def get_weight_fractions():
-	"""
-	Returns a list of numbers which represent the fraction of weights pruned after each pruning iteration
-	"""
-	percent_20s = []
-	for i in range(31):
-		percent_20s.append(get_20_percent(100 - sum(percent_20s)))
-	weight_fractions = []
-	for i in range(31):
-		weight_fractions.append(sum(percent_20s[:i]))
-	return weight_fractions
-
-
-def permute_masks(old_masks):
-	""" 
-	Function to randomly permute the mask in a global manner.
-	Arguments
-	---------
-	old_masks: List containing all the layer wise mask of the neural network, mandatory. No default.
-	seed: Integer containing the random seed to use for reproducibility. Default is 0
-
-	Returns
-	-------
-	new_masks: List containing all the masks permuted globally
-	"""
-
-	layer_wise_flatten = []                      # maintain the layerwise flattened tensor
-	for i in range(len(old_masks)):
-		layer_wise_flatten.append(old_masks[i].flatten())
-
-	global_flatten = []
-	for i in range(len(layer_wise_flatten)):
-		if len(global_flatten) == 0:
-			global_flatten.append(layer_wise_flatten[i].cpu())
-		else:
-			global_flatten[-1] = np.append(global_flatten[-1], layer_wise_flatten[i].cpu())
-	permuted_mask = np.random.permutation(global_flatten[-1])
-
-	new_masks = []
-	idx1 = 0
-	idx2 = 0
-	for i in range(len(old_masks)):
-		till_idx = old_masks[i].numel()
-		idx2 = idx2 + till_idx
-		new_masks.append(permuted_mask[idx1:idx2].reshape(old_masks[i].shape))
-		idx1 = idx2
-
-	# Convert to tensor
-	for i in range(len(new_masks)):
-		new_masks[i] = torch.tensor(new_masks[i])
-
-	return new_masks
-
+from tqdm import tqdm 
 
 def prune_iteratively(model, dataloader, architecture, optimizer_type, device, models_path, init_path, random, is_equal_classes):
 	"""
@@ -166,10 +101,13 @@ def prune_iteratively(model, dataloader, architecture, optimizer_type, device, m
 
 		model.to(device)
 
-		for epoch in range(1, num_epochs+1):
+		pruning_cycle = tqdm(range(1, num_epochs+1))
+		for epoch in pruning_cycle:
 			if epoch in lr_anneal_epochs:
 				optimizer.param_groups[0]['lr'] /= 10
 
+			correct = 0
+			total = 0
 			for batch_num, data in enumerate(dataloader, 0):
 				inputs, labels = data[0].to(device), data[1].to(device)
 				optimizer.zero_grad()
@@ -186,6 +124,10 @@ def prune_iteratively(model, dataloader, architecture, optimizer_type, device, m
 				loss.backward()
 				optimizer.step()
 
+				_, predicted = torch.max(outputs.data, 1)
+				total += labels.size(0)
+				correct += (predicted == labels).sum().item()
+
 			if epoch == num_epochs:
 				if pruning_iter != 0:
 					layer_index = 0
@@ -194,6 +136,7 @@ def prune_iteratively(model, dataloader, architecture, optimizer_type, device, m
 							params.data.mul_(masks[layer_index].to(device))
 							layer_index += 1
 				torch.save({'epoch': epoch,'model_state_dict': model.state_dict(),'optimizer_state_dict': optimizer.state_dict() },models_path + "/"+ str(pruning_iter) + "_" + str(epoch))
+			pruning_cycle.set_description(f"Accuracy: {100 * correct / total}")
 	print("Finished Iterative Pruning")
 
 

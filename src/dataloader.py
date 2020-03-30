@@ -6,7 +6,7 @@ import torch.nn as nn
 import torchvision.models as models
 import torchvision.transforms as transforms
 
-def load_dataset(dataset, batch_size = 512, is_train_split=True):
+def load_dataset(dataset, batch_size = 512, is_train_split=True, root='../datasets'):
 	"""
 	Loads the dataset loader object
 
@@ -24,12 +24,12 @@ def load_dataset(dataset, batch_size = 512, is_train_split=True):
 		if dataset == 'cifar10':
 			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 			transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
-			data_set = torchvision.datasets.CIFAR10(root='../datasets', train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
+			data_set = torchvision.datasets.CIFAR10(root=root, train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True)
 		elif dataset == 'cifar100':
 			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 			transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
-			data_set = torchvision.datasets.CIFAR100(root='../datasets', train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
+			data_set = torchvision.datasets.CIFAR100(root=root, train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True)
 		elif dataset == 'svhn':
 			if not is_train_split:
@@ -38,17 +38,17 @@ def load_dataset(dataset, batch_size = 512, is_train_split=True):
 				svhn_split = 'train'
 			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 			transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
-			data_set = torchvision.datasets.SVHN(root='../datasets', split=svhn_split , download=True, transform=transforms.Compose([transform_augment, transform]))
+			data_set = torchvision.datasets.SVHN(root=root, split=svhn_split , download=True, transform=transforms.Compose([transform_augment, transform]))
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True)
 		elif dataset == 'fashionmnist':
 			transform = transforms.Compose([transforms.Grayscale(3),transforms.ToTensor(),transforms.Normalize((0.5,), (0.5,))])
 			transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
-			data_set = torchvision.datasets.FashionMNIST(root='../datasets', train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
+			data_set = torchvision.datasets.FashionMNIST(root=root, train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True, num_workers=2)
 		elif dataset == 'cifar10a' or dataset == 'cifar10b':
 			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 			transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
-			cifarset = torchvision.datasets.CIFAR10(root='../datasets', train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
+			cifarset = torchvision.datasets.CIFAR10(root=root, train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
 			label_flag = {x:True for x in range(10)}
 			cifarA = []
 			cifarB = []
@@ -84,12 +84,12 @@ def load_dataset(dataset, batch_size = 512, is_train_split=True):
 		if dataset == 'cifar10':
 			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 			# transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
-			data_set = torchvision.datasets.CIFAR10(root='../datasets', train=is_train_split, download=True, transform=transform)
+			data_set = torchvision.datasets.CIFAR10(root=root, train=is_train_split, download=True, transform=transform)
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True)
 		elif dataset == 'cifar100':
 			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 			# transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
-			data_set = torchvision.datasets.CIFAR100(root='../datasets', train=is_train_split, download=True, transform=transform)
+			data_set = torchvision.datasets.CIFAR100(root=root, train=is_train_split, download=True, transform=transform)
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True)
 		elif dataset == 'svhn':
 			if not is_train_split:
@@ -98,17 +98,17 @@ def load_dataset(dataset, batch_size = 512, is_train_split=True):
 				svhn_split = 'train'
 			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 			# transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
-			data_set = torchvision.datasets.SVHN(root='../datasets', split=svhn_split , download=True, transform=transform)
+			data_set = torchvision.datasets.SVHN(root=root, split=svhn_split , download=True, transform=transform)
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True)
 		elif dataset == 'fashionmnist':
 			transform = transforms.Compose([transforms.Grayscale(3),transforms.ToTensor(),transforms.Normalize((0.5,), (0.5,))])
 			# transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
-			data_set = torchvision.datasets.FashionMNIST(root='../datasets', train=is_train_split, download=True, transform=transform)
+			data_set = torchvision.datasets.FashionMNIST(root=root, train=is_train_split, download=True, transform=transform)
 			data_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True, num_workers=2)
 		elif dataset == 'cifar10a' or dataset == 'cifar10b':
 			transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 			transform_augment = transforms.Compose([transforms.RandomHorizontalFlip(), transforms. RandomCrop(32, padding=4)])
-			cifarset = torchvision.datasets.CIFAR10(root='../datasets', train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
+			cifarset = torchvision.datasets.CIFAR10(root=root, train=is_train_split, download=True, transform=transforms.Compose([transform_augment, transform]))
 			label_flag = {x:True for x in range(10)}
 			cifarA = []
 			cifarB = []

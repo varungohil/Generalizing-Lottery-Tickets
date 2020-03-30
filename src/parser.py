@@ -9,8 +9,12 @@ def args_parser_train():
 	parser.add_argument('--dataset',type=str, required=True, help='dataset [cifar10, cifar100, svhn, fashionmnist]')
 	parser.add_argument('--batch-size', type=int, default=512, help='input batch size for training (default: 512)')
 	parser.add_argument('--optimizer', type=str, default='sgd', help='optimizer [sgd, adam]')
+	parser.add_argument('--freeze-mask', type=bool, default=True, help='freeze lottery tickets mask')
+	parser.add_argument('--freeze-conv', type=bool, default=False, help='freeze convolutional layers')
+	parser.add_argument('--random-weights', type=bool, default=False, help='reinitialize random weights')
 	parser.add_argument('--seed', type=int, default=1, help='random seed (default: 1)')
-	parser.add_argument('--model-saving-path',  type=str, default = ".",help='path to directory where you want to save trained models (default = .)')  
+	parser.add_argument('--init-path',type=str, help='path to the model weight in case of pretraining')
+	parser.add_argument('--model-saving-path',  type=str, default = "weights/",help='path to directory where you want to save trained models (default = .)')  
 	return parser
 
 def args_parser_iterprune():
@@ -25,7 +29,7 @@ def args_parser_iterprune():
 	parser.add_argument('--optimizer', type=str, default='sgd', help='optimizer [sgd, adam]')
 	parser.add_argument('--seed', type=int, default=1, help='random seed (default: 1)')
 	parser.add_argument('--init-path',type=str, required=True, help='path to winning initialization model (default = .)')  
-	parser.add_argument('--model-saving-path', type=str, default = ".", help='path to directory where you want to save trained models (default = .)')
+	parser.add_argument('--model-saving-path', type=str, default = "weights/", help='path to directory where you want to save trained models (default = .)')
 	parser.add_argument('--random', type=str,  default = "false", help='to train random ticket (default = false)')
 	return parser
 
@@ -40,3 +44,5 @@ def args_parser_test():
 	parser.add_argument('--batch-size', type=int, default=512, help='input batch size for training (default: 512)')
 	parser.add_argument('--model-path',type=str, required=True, help='path to the model for finding test accuracy')
 	return parser
+
+

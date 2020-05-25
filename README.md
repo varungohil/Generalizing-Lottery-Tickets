@@ -103,11 +103,27 @@ The results of the replicated experiments can be found in plots folder.
 ### Citation 
 If you use this repository, kindly cite the reproducibility report and the original paper. The bibtex is given below.
 ```
-@article{gohil2019one,
-  title={One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers},
-  author={Gohil, Varun and Narayanan, S Deepak and Jain, Atishay},
-  journal={ReScience-C}
-  year={2020}
+@article{Gohil:2020,
+  author = {Gohil, Varun and Narayanan, S. Deepak and Jain, Atishay},
+  title = {{[Re] One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers}},
+  journal = {ReScience C},
+  year = {2020},
+  month = may,
+  volume = {6},
+  number = {2},
+  pages = {{#4}},
+  doi = {10.5281/zenodo.3818619},
+  url = {https://zenodo.org/record/3818619/files/article.pdf},
+  code_url = {https://github.com/varungohil/Generalizing-Lottery-Tickets},
+  code_doi = {10.5281/zenodo.3700320},
+  code_swh = {swh:1:dir:8a9e53bc8a9028428bbad6a4e77ae3fedae49d30},
+  data_url = {},
+  data_doi = {},
+  review_url = {https://openreview.net/forum?id=SklFHaqG6S},
+  type = {Replication},
+  language = {Python},
+  domain = {NeurIPS 2019 Reproducibility Challenge},
+  keywords = {lottery ticket hypothesis, pytorch}
 }
 
 @article{Morcos2019OneTT,
@@ -116,17 +132,6 @@ If you use this repository, kindly cite the reproducibility report and the origi
   journal={ArXiv},
   year={2019},
   volume={abs/1906.02773}
-}
-
-@misc{https://doi.org/10.5281/zenodo.3700320,
-  doi = {10.5281/ZENODO.3700320},
-  url = {https://zenodo.org/record/3700320},
-  author = {{Varun Gohil} and {S Deepak Narayanan} and {Atishay Jain}},
-  keywords = {Lottery Ticket Hypothesis,  Neural Network Pruning,  NeurIPS Reproducibility Challenge},
-  language = {en},
-  title = {varungohil/Generalizing-Lottery-Tickets},
-  publisher = {Zenodo},
-  year = {2020}
 }
 ```  
 ### Contributors

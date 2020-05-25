@@ -126,13 +126,17 @@ If you use this repository, kindly cite the reproducibility report and the origi
   keywords = {lottery ticket hypothesis, pytorch}
 }
 
-@article{Morcos2019OneTT,
-  title={One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers},
-  author={Ari S. Morcos and Haonan Yu and Michela Paganini and Yuandong Tian},
-  journal={ArXiv},
-  year={2019},
-  volume={abs/1906.02773}
+@incollection{NIPS2019_8739,
+title = {One ticket to win them all: generalizing lottery ticket initializations across datasets and optimizers},
+author = {Morcos, Ari and Yu, Haonan and Paganini, Michela and Tian, Yuandong},
+booktitle = {Advances in Neural Information Processing Systems 32},
+editor = {H. Wallach and H. Larochelle and A. Beygelzimer and F. d\textquotesingle Alch\'{e}-Buc and E. Fox and R. Garnett},
+pages = {4932--4942},
+year = {2019},
+publisher = {Curran Associates, Inc.},
+url = {http://papers.nips.cc/paper/8739-one-ticket-to-win-them-all-generalizing-lottery-ticket-initializations-across-datasets-and-optimizers.pdf}
 }
+
 ```  
 ### Contributors
 [Varun Gohil*](https://varungohil.github.io), [S. Deepak Narayanan*](https://sdeepaknarayanan.github.io), [Atishay Jain*](https://github.com/AtishayJain-ML)

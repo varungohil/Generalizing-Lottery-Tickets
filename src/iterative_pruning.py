@@ -1,238 +1,210 @@
 from utils import *
+from dataloader import *
+from model import *
+from parser import *
 import torch
+import torch.nn as nn
 import random
 import torchvision
 import torch.optim as optim
 import numpy as np
+import pickle
+from tqdm import tqdm 
 
+def prune_iteratively(model, dataloader_train, dataloader_test, dataset, architecture, optimizer_type, device, models_path, init_path, random, is_equal_classes):
+    """
+    Performs iterative pruning
 
-def get_20_percent(total):
-	"""
-	Argument
-	--------
-	total : The number whose 20 percent we need to calculate
+    Arguments
+    ---------
+    model : the PyTorch neural network model to be trained
+    dataloader : PyTorch dataloader for loading the dataset
+    architecture : The neural network architecture (VGG19 or ResNet50)
+    optimizer_type : The optimizer to use for training (SGD / Adam)
+    device : Device(GPU/CPU) on which to perform computation
+    models_path: Path to directory where trained model/checkpoints will be saved
+    init_path : Path to winning ticket initialization model
+    random    : Boolean which when True perform pruning for random ticket
+    is_equal_classes : Boolean to indicate is source and target dataset have equal number of classes
 
-	Returns
-	-------
-	20% of total
+    Returns
+    --------
+    None
+    """
+    if architecture == "vgg19":
+        num_epochs = 160
+        lr_anneal_epochs = [80, 120]
+    elif architecture == "resnet50":
+        num_epochs = 90
+        lr_anneal_epochs = [50, 65, 80]
+    else:
+        raise ValueError(architecture + " architecture not supported")
 
-	"""
-	return 0.2*total
+    criterion = nn.CrossEntropyLoss().cuda()
 
+    weight_fractions = get_weight_fractions()
 
-def get_weight_fractions():
-	"""
-	Returns a list of numbers which represent the fraction of weights pruned after each pruning iteration
-	"""
-	percent_20s = []
-	for i in range(31):
-		percent_20s.append(get_20_percent(100 - sum(percent_20s)))
-	weight_fractions = []
-	for i in range(31):
-		weight_fractions.append(sum(percent_20s[:i]))
-	return weight_fractions
+    print("Iterative Pruning started", flush=True)
+    test_accuracys, test_losses = [], []
+    for pruning_iter in range(0, 31):
+        print(f"Running pruning iteration {pruning_iter}", flush=True)
+        if optimizer_type == 'sgd':
+            optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
+        elif optimizer_type == 'adam':
+            optimizer = optim.Adam(model.parameters(), lr=0.0003, weight_decay=0.0001)
+        else:
+            raise ValueError(optimizer_type + " optimizer not supported")
 
+        if pruning_iter != 0:
+            cpt = torch.load(models_path + f"/{pruning_iter-1}_{last_epoch}")
+            model.load_state_dict(cpt['model_state_dict'])
 
-def permute_masks(old_masks):
-	""" 
-	Function to randomly permute the mask in a global manner.
-	Arguments
-	---------
-	old_masks: List containing all the layer wise mask of the neural network, mandatory. No default.
-	seed: Integer containing the random seed to use for reproducibility. Default is 0
+            masks = []
+            flat_model_weights = np.array([])
+            for name, params in model.named_parameters():
+                if "weight" in name:
+                    layer_weights = params.data.cpu().numpy()
+                    flat_model_weights = np.concatenate((flat_model_weights, layer_weights.flatten()))
+            threshold = np.percentile(abs(flat_model_weights), weight_fractions[pruning_iter])
 
-	Returns
-	-------
-	new_masks: List containing all the masks permuted globally
-	"""
+            zeros = 0
+            total = 0
+            for name, params in model.named_parameters():
+                if "weight" in name:
+                    weight_copy = params.data.abs().clone()
+                    mask = weight_copy.gt(threshold).float()
+                    zeros += mask.numel() - mask.nonzero().size(0)
+                    total += mask.numel()
+                    masks.append(mask)
+                    if random != 'false':
+                        masks = permute_masks(masks)
+            print(f"Fraction of weights pruned = {zeros}/{total} = {zeros/total}", flush=True)  
 
-	layer_wise_flatten = []                      # maintain the layerwise flattened tensor
-	for i in range(len(old_masks)):
-		layer_wise_flatten.append(old_masks[i].flatten())
+        if random == 'false':
+            load_weights(model, init_path, is_equal_classes)
 
-	global_flatten = []
-	for i in range(len(layer_wise_flatten)):
-		if len(global_flatten) == 0:
-			global_flatten.append(layer_wise_flatten[i].cpu())
-		else:
-			global_flatten[-1] = np.append(global_flatten[-1], layer_wise_flatten[i].cpu())
-	permuted_mask = np.random.permutation(global_flatten[-1])
+        if torch.cuda.device_count() > 1:
+            model = nn.DataParallel(model)
+        model.to(device)
 
-	new_masks = []
-	idx1 = 0
-	idx2 = 0
-	for i in range(len(old_masks)):
-		till_idx = old_masks[i].numel()
-		idx2 = idx2 + till_idx
-		new_masks.append(permuted_mask[idx1:idx2].reshape(old_masks[i].shape))
-		idx1 = idx2
+        pruning_cycle = tqdm(range(1, num_epochs+1))
+        for epoch in pruning_cycle:
+            last_epoch = epoch
+            if epoch in lr_anneal_epochs:
+                optimizer.param_groups[0]['lr'] /= 10
 
-	# Convert to tensor
-	for i in range(len(new_masks)):
-		new_masks[i] = torch.tensor(new_masks[i])
+            for batch_num, data in enumerate(dataloader_train, 0):
+                inputs, labels = data[0].to(device), data[1].to(device)
+                if dataset == 'MiniImagenet':
+                    labels = data[1].to(device).long()
+                optimizer.zero_grad()
+                
+                if pruning_iter != 0:
+                    layer_index = 0
+                    for name, params in model.named_parameters():
+                        if "weight" in name:
+                            params.data.mul_(masks[layer_index].to(device))
+                            layer_index += 1
 
-	return new_masks
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                loss.backward()
+                optimizer.step()
 
+            if epoch == num_epochs:
+                if pruning_iter != 0:
+                    layer_index = 0
+                    for name, params in model.named_parameters():
+                        if "weight" in name:
+                            params.data.mul_(masks[layer_index].to(device))
+                            layer_index += 1
+                torch.save({'epoch': epoch,'model_state_dict': model.state_dict(),'optimizer_state_dict': optimizer.state_dict() },models_path + "/"+ str(pruning_iter) + "_" + str(epoch))
+        
+            pruning_cycle.set_description(f'Epoch {epoch}')
 
-def prune_iteratively(model, dataloader, architecture, optimizer_type, device, models_path, init_path, random, is_equal_classes):
-	"""
-	Performs iterative pruning
+        if pruning_iter < 7 or pruning_iter % 3 == 0:
+            test_loss, test_accuracy = test(model, dataloader_test)
+            print(f'Pruning Iteration {pruning_iter} : Test Loss {test_loss} : Test Accuracy {test_accuracy}', flush=True)
+            test_accuracys.append(test_accuracys)
+            test_losses.append(test_losses)
 
-	Arguments
-	---------
-	model : the PyTorch neural network model to be trained
-	dataloader : PyTorch dataloader for loading the dataset
-	architecture : The neural network architecture (VGG19 or ResNet50)
-	optimizer_type : The optimizer to use for training (SGD / Adam)
-	device : Device(GPU/CPU) on which to perform computation
-	models_path: Path to directory where trained model/checkpoints will be saved
-	init_path : Path to winning ticket initialization model
-	random    : Boolean which when True perform pruning for random ticket
-	is_equal_classes : Boolean to indicate is source and target dataset have equal number of classes
+    print(f"Test accuracys {test_accuracys}")
+    print(f"Test accuracys {test_losses}")
+    print("Finished Iterative Pruning", flush=True)
 
-	Returns
-	--------
-	None
-	"""
-	if architecture == "vgg19":
-		num_epochs = 160
-		lr_anneal_epochs = [80, 120]
-	elif architecture == "resnet50":
-		num_epochs = 90
-		lr_anneal_epochs = [50, 65, 80]
-	else:
-		raise ValueError(architecture + " architecture not supported")
+def test(model, dataloader):
+    """
+    Function to print the fraction of pruned weights and test accuracy of a model
 
-	criterion = nn.CrossEntropyLoss().cuda()
+    Arguments
+    ---------
+    model : the PyTorch neural netowrk architecture
+    dataloader : PyTorch dataloader for loading the dataset
+    device : Device(GPU/CPU) on which to perform computation
+    model_path: Path to trained model whose accuracy needs to be evaluated
 
-	weight_fractions = get_weight_fractions()
+    Returns:
+    None
+    """
+    criterion = nn.CrossEntropyLoss().cuda()
 
-	print("Iterative Pruning started")
-	for pruning_iter in range(0,31):
-		print(f"Running pruning iteration {pruning_iter}")
-		if optimizer_type == 'sgd':
-			optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0001)
-		elif optimizer_type == 'adam':
-			optimizer = optim.Adam(model.parameters(), lr=0.0003, weight_decay=0.0001)
-		else:
-			raise ValueError(optimizer_type + " optimizer not supported")
-
-		if pruning_iter != 0:
-			cpt = torch.load(models_path + f"/{pruning_iter-1}_{num_epochs}")
-			model.load_state_dict(cpt['model_state_dict'])
-
-			masks = []
-			flat_model_weights = np.array([])
-			for name, params in model.named_parameters():
-				if "weight" in name:
-					layer_weights = params.data.cpu().numpy()
-					flat_model_weights = np.concatenate((flat_model_weights, layer_weights.flatten()))
-			threshold = np.percentile(abs(flat_model_weights), weight_fractions[pruning_iter])
-
-			zeros = 0
-			total = 0
-			for name, params in model.named_parameters():
-				if "weight" in name:
-					weight_copy = params.data.abs().clone()
-					mask = weight_copy.gt(threshold).float()
-					zeros += mask.numel() - mask.nonzero().size(0)
-					total += mask.numel()
-					masks.append(mask)
-					if random != 'false':
-						masks = permute_masks(masks)
-			print(f"Fraction of weights pruned = {zeros}/{total} = {zeros/total}")  
-
-		if random == 'false':
-			if is_equal_classes:
-				cpt = torch.load(init_path)
-				model.load_state_dict(cpt['model_state_dict'])
-			else:
-				cpt = torch.load(init_path)
-				new_dict = model.state_dict()
-				for key in new_dict.keys():
-					if "classifier" not in key and "fc" not in key:
-						new_dict[key] = cpt['model_state_dict'][key]
-						model.load_state_dict(new_dict)
-					else:
-						for m in model.modules():
-							if isinstance(model, nn.Conv2d):
-								if architecture == 'vgg19':
-									nn.init.xavier_normal_(m.weight)
-									layer.bias.data.fill_(0)
-								elif architecture == 'resnet50':
-									nn.init.kaiming_normal_(m.weight)
-								else:
-									raise ValueError(architecture + " architecture not supported")
-
-		model.to(device)
-
-		for epoch in range(1, num_epochs+1):
-			if epoch in lr_anneal_epochs:
-				optimizer.param_groups[0]['lr'] /= 10
-
-			for batch_num, data in enumerate(dataloader, 0):
-				inputs, labels = data[0].to(device), data[1].to(device)
-				optimizer.zero_grad()
-				
-				if pruning_iter != 0:
-					layer_index = 0
-					for name, params in model.named_parameters():
-						if "weight" in name:
-							params.data.mul_(masks[layer_index].to(device))
-							layer_index += 1
-
-				outputs = model(inputs)
-				loss = criterion(outputs, labels)
-				loss.backward()
-				optimizer.step()
-
-			if epoch == num_epochs:
-				if pruning_iter != 0:
-					layer_index = 0
-					for name, params in model.named_parameters():
-						if "weight" in name:
-							params.data.mul_(masks[layer_index].to(device))
-							layer_index += 1
-				torch.save({'epoch': epoch,'model_state_dict': model.state_dict(),'optimizer_state_dict': optimizer.state_dict() },models_path + "/"+ str(pruning_iter) + "_" + str(epoch))
-	print("Finished Iterative Pruning")
-
+    correct = 0
+    total = 0
+    total_loss = 0
+    with torch.no_grad():
+        for data in dataloader:
+            inputs, labels = data[0].to(device), data[1].to(device)
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            total_loss += loss.item()
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+    test_loss = round(total_loss / total, 4)
+    test_accuracy = round(correct / total * 100, 3)
+    return test_loss, test_accuracy
 
 if __name__ == '__main__':
-	#Parsers the command line arguments
-	parser = args_parser_iterprune()
-	args = parser.parse_args()
+    #Parsers the command line arguments
+    parser = args_parser_iterprune()
+    args = parser.parse_args()
 
-	#Sets random seed
-	random.seed(args.seed)
+    #Sets random seed
+    random.seed(args.seed)
 
-	#Uses GPU is available
-	device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-	print(f'Using {device} device.')
+    #Uses GPU is available
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f'Using {device} device.', flush=True)
+    if torch.cuda.device_count() > 1:
+        print(f'Using {torch.cuda.device_count()} GPUs', flush=True)    
 
+    #Loads dataset
+    dataloader_train = load_dataset(args.target_dataset, args.batch_size, True)
+    dataloader_test = load_dataset(args.target_dataset, args.batch_size, False)
 
-	#Checks number of classes to aa appropriate linear layer at end of model
-	if args.source_dataset in ['cifar10', 'svhn', 'fashionmnist']:
-		num_classes_source = 10
-	elif args.source_dataset in ['cifar100']:
-		num_classes_source = 100
-	else:
-		raise ValueError(args.source_dataset + " as a source dataset is not supported")
+    #Checks number of classes to aa appropriate linear layer at end of model
+    if args.source_dataset in ['cifar10', 'svhn', 'fashionmnist']:
+        num_classes_source = 10
+    elif args.source_dataset in ['cifar100']:
+        num_classes_source = 100
+    else:
+        raise ValueError(args.source_dataset + " as a source dataset is not supported")
 
-	if args.target_dataset in ['cifar10', 'svhn', 'fashionmnist']:
-		num_classes_target = 10
-	elif args.target_dataset in ['cifar100']:
-		num_classes_target = 100
-	else:
-		raise ValueError(args.target_dataset + " as a target dataset is not supported")
+    if args.target_dataset in ['cifar10', 'svhn', 'fashionmnist']:
+        num_classes_target = 10
+    elif args.target_dataset in ['cifar100']:
+        num_classes_target = 100
+    else:
+        raise ValueError(args.target_dataset + " as a target dataset is not supported")
 
-	#Loads dataset
-	dataloader = load_dataset(args.target_dataset, args.batch_size, True)
+    #Loads model
+    model = load_model(args.architecture, num_classes_target)
 
-	#Loads model
-	model = load_model(args.architecture, num_classes_target)
+    #Print args
+    print(args)
 
-	if num_classes_source == num_classes_target:
-		prune_iteratively(model, dataloader, args.architecture, args.optimizer, device, args.model_saving_path, args.init_path, args.random, True)
-	else:
-		prune_iteratively(model, dataloader, args.architecture, args.optimizer, device, args.model_saving_path, args.init_path, args.random, False)
+    if num_classes_source == num_classes_target:
+        prune_iteratively(model, dataloader_train, dataloader_test, args.target_dataset, args.architecture, args.optimizer, device, args.model_saving_path, args.init_path, args.random, True)
+    else:
+        prune_iteratively(model, dataloader_train, dataloader_test, args.target_dataset, args.architecture, args.optimizer, device, args.model_saving_path, args.init_path, args.random, False)
 

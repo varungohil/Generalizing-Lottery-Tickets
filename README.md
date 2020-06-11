@@ -138,6 +138,11 @@ url = {http://papers.nips.cc/paper/8739-one-ticket-to-win-them-all-generalizing-
 }
 
 ```  
-### Contributors
-[Varun Gohil*](https://varungohil.github.io), [S. Deepak Narayanan*](https://sdeepaknarayanan.github.io), [Atishay Jain*](https://github.com/AtishayJain-ML)
+### Core Contributors
+[Varun Gohil](https://varungohil.github.io), [S. Deepak Narayanan](https://sdeepaknarayanan.github.io), [Atishay Jain](https://github.com/AtishayJain-ML)
 
+### Development
+We have a new branch ```dev``` in which pull requests are welcome. We will merge them after reviewing. 
+
+### Contributors
+[fcorencot](https://github.com/fcorencoret)
